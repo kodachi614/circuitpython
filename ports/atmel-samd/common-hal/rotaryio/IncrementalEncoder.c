@@ -36,7 +36,7 @@
 #include "supervisor/shared/translate/translate.h"
 
 void common_hal_rotaryio_incrementalencoder_construct(rotaryio_incrementalencoder_obj_t *self,
-    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b) {
+    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b, uint32_t pull_mode) {
     if (!pin_a->has_extint || !pin_b->has_extint) {
         mp_raise_RuntimeError(translate("Both pins must support hardware interrupts"));
     }
@@ -59,10 +59,16 @@ void common_hal_rotaryio_incrementalencoder_construct(rotaryio_incrementalencode
     self->pin_b = pin_b->number;
 
     gpio_set_pin_function(self->pin_a, GPIO_PIN_FUNCTION_A);
-    gpio_set_pin_pull_mode(self->pin_a, GPIO_PULL_UP);
+
+    if (pull_mode != ROTARYIO_PULL_NONE) {
+        gpio_set_pin_pull_mode(self->pin_a, (pull_mode == ROTARYIO_PULL_UP) ? GPIO_PULLUP : GPIO_PULLDOWN);
+    }
 
     gpio_set_pin_function(self->pin_b, GPIO_PIN_FUNCTION_A);
-    gpio_set_pin_pull_mode(self->pin_b, GPIO_PULL_UP);
+
+    if (pull_mode != ROTARYIO_PULL_NONE) {
+        gpio_set_pin_pull_mode(self->pin_b, (pull_mode == ROTARYIO_PULL_UP) ? GPIO_PULLUP : GPIO_PULLDOWN);
+    }
 
     set_eic_channel_data(self->eic_channel_a, (void *)self);
     set_eic_channel_data(self->eic_channel_b, (void *)self);

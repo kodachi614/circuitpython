@@ -31,7 +31,12 @@
 #include "py/runtime.h"
 
 void common_hal_rotaryio_incrementalencoder_construct(rotaryio_incrementalencoder_obj_t *self,
-    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b) {
+    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b, uint32_t pull_mode) {
+
+    if (pull_mode != ROTARYIO_PULL_UP) {
+        mp_raise_RuntimeError(translate("Only pullup mode is supported for RotaryIO"));
+    }
+
     claim_pin(pin_a);
     claim_pin(pin_b);
 

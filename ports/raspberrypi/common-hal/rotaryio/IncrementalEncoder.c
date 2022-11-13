@@ -60,7 +60,7 @@ STATIC const uint16_t encoder_init[] = {
 STATIC void incrementalencoder_interrupt_handler(void *self_in);
 
 void common_hal_rotaryio_incrementalencoder_construct(rotaryio_incrementalencoder_obj_t *self,
-    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b) {
+    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b, uint32_t pull_mode) {
     const mcu_pin_obj_t *pins[] = { pin_a, pin_b };
 
     // Start out with swapped to match behavior with other ports.
@@ -77,13 +77,22 @@ void common_hal_rotaryio_incrementalencoder_construct(rotaryio_incrementalencode
     self->position = 0;
     self->sub_count = 0;
 
+    uint32_t pullups = 0;
+    uint32_t pulldowns = 0;
+
+    if (pull_mode == ROTARYIO_PULL_UP) {
+        pullups = 3;
+    } else if (pull_mode == ROTARYIO_PULL_DOWN) {
+        pulldowns = 3;
+    }
+
     common_hal_rp2pio_statemachine_construct(&self->state_machine,
         encoder, MP_ARRAY_SIZE(encoder),
         1000000,
         encoder_init, MP_ARRAY_SIZE(encoder_init), // init
         NULL, 0, 0, 0, // out pin
         pins[0], 2, // in pins
-        3, 0, // in pulls
+        pullups, pulldowns, // in pulls
         NULL, 0, 0, 0x1f, // set pins
         NULL, 0, 0, 0x1f, // sideset pins
         false, // No sideset enable

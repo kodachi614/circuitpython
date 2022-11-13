@@ -30,10 +30,14 @@
 #include "common-hal/microcontroller/Pin.h"
 #include "common-hal/rotaryio/IncrementalEncoder.h"
 
+#define ROTARYIO_PULL_NONE  0
+#define ROTARYIO_PULL_UP    1
+#define ROTARYIO_PULL_DOWN  2
+
 extern const mp_obj_type_t rotaryio_incrementalencoder_type;
 
 extern void common_hal_rotaryio_incrementalencoder_construct(rotaryio_incrementalencoder_obj_t *self,
-    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b);
+    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b, uint32_t pull);
 extern void common_hal_rotaryio_incrementalencoder_deinit(rotaryio_incrementalencoder_obj_t *self);
 extern bool common_hal_rotaryio_incrementalencoder_deinited(rotaryio_incrementalencoder_obj_t *self);
 extern mp_int_t common_hal_rotaryio_incrementalencoder_get_position(rotaryio_incrementalencoder_obj_t *self);

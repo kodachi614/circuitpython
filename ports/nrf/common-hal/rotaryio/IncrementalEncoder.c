@@ -50,7 +50,11 @@ static void _intr_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
 }
 
 void common_hal_rotaryio_incrementalencoder_construct(rotaryio_incrementalencoder_obj_t *self,
-    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b) {
+    const mcu_pin_obj_t *pin_a, const mcu_pin_obj_t *pin_b, uint32_t pull_mode) {
+
+    if (pull_mode == ROTARYIO_PULL_NONE {
+        mp_raise_RuntimeError(translate("RotaryIO cannot be used with pull=None"));
+    }
 
     self->pin_a = pin_a->number;
     self->pin_b = pin_b->number;
@@ -60,7 +64,7 @@ void common_hal_rotaryio_incrementalencoder_construct(rotaryio_incrementalencode
 
     nrfx_gpiote_in_config_t cfg = {
         .sense = NRF_GPIOTE_POLARITY_TOGGLE,
-        .pull = NRF_GPIO_PIN_PULLUP,
+        .pull = (pull_mode == ROTARYIO_PULL_UP) ? NRF_GPIO_PIN_PULLUP : NRF_GPIO_PIN_PULLDOWN,
         .is_watcher = false,
         .hi_accuracy = true,
         .skip_gpio_setup = false

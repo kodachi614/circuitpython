@@ -47,6 +47,8 @@
 //|         :param ~microcontroller.Pin pin_a: First pin to read pulses from.
 //|         :param ~microcontroller.Pin pin_b: Second pin to read pulses from.
 //|         :param int divisor: The divisor of the quadrature signal.
+//|         :param str pull: The pull mode for the pins. One of "up" (the default),
+//|            "down", or "none". Not all ports support setting the pull mode.
 //|
 //|         For example::
 //|
@@ -63,23 +65,35 @@
 //|               last_position = position"""
 //|         ...
 STATIC mp_obj_t rotaryio_incrementalencoder_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *all_args) {
-    enum { ARG_pin_a, ARG_pin_b, ARG_divisor };
+    enum { ARG_pin_a, ARG_pin_b, ARG_divisor, ARG_pull };
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_pin_a, MP_ARG_REQUIRED | MP_ARG_OBJ },
         { MP_QSTR_pin_b, MP_ARG_REQUIRED | MP_ARG_OBJ },
         { MP_QSTR_divisor, MP_ARG_INT, { .u_int = 4 } },
+        { MP_QSTR_pull, MP_ARG_OBJ, { .u_obj = MP_OBJ_NEW_QSTR(MP_QSTR_up) } },
     };
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all_kw_array(n_args, n_kw, all_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
     const mcu_pin_obj_t *pin_a = validate_obj_is_free_pin(args[ARG_pin_a].u_obj, MP_QSTR_pin_a);
     const mcu_pin_obj_t *pin_b = validate_obj_is_free_pin(args[ARG_pin_b].u_obj, MP_QSTR_pin_b);
+    uint32_t pull_qstr = MP_OBJ_QSTR_VALUE(args[ARG_pull].u_obj);
+
+    uint32_t pull_mode = ROTARYIO_PULL_UP;
+
+    if (pull_qstr == MP_QSTR_down) {
+        pull_mode = ROTARYIO_PULL_DOWN;
+    } else if (pull_qstr == MP_QSTR_none) {
+        pull_mode = ROTARYIO_PULL_NONE;
+    } else if (pull_qstr != MP_QSTR_up) {
+        mp_raise_ValueError(translate("Invalid pull"));
+    }
 
     // Make long-lived because some implementations use a pointer to the object as interrupt-handler data.
     rotaryio_incrementalencoder_obj_t *self = m_new_ll_obj_with_finaliser(rotaryio_incrementalencoder_obj_t);
     self->base.type = &rotaryio_incrementalencoder_type;
 
-    common_hal_rotaryio_incrementalencoder_construct(self, pin_a, pin_b);
+    common_hal_rotaryio_incrementalencoder_construct(self, pin_a, pin_b, pull_mode);
     common_hal_rotaryio_incrementalencoder_set_divisor(self, args[ARG_divisor].u_int);
 
     return MP_OBJ_FROM_PTR(self);
@@ -171,7 +185,6 @@ MP_PROPERTY_GETSET(rotaryio_incrementalencoder_position_obj,
 STATIC const mp_rom_map_elem_t rotaryio_incrementalencoder_locals_dict_table[] = {
     // Methods
     { MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&rotaryio_incrementalencoder_deinit_obj) },
-    { MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&rotaryio_incrementalencoder_deinit_obj) },
     { MP_ROM_QSTR(MP_QSTR___enter__), MP_ROM_PTR(&default___enter___obj) },
     { MP_ROM_QSTR(MP_QSTR___exit__), MP_ROM_PTR(&rotaryio_incrementalencoder___exit___obj) },
     { MP_ROM_QSTR(MP_QSTR_position), MP_ROM_PTR(&rotaryio_incrementalencoder_position_obj) },
