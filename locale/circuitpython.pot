@@ -205,15 +205,10 @@ msgstr ""
 msgid "%q must be array of type 'h'"
 msgstr ""
 
-<<<<<<< HEAD
 #: ports/raspberrypi/bindings/cyw43/__init__.c py/argcheck.c py/objexcept.c
 #: shared-bindings/canio/CAN.c shared-bindings/digitalio/Pull.c
 #: shared-module/synthio/Synthesizer.c
 msgid "%q must be of type %q or %q, not %q"
-=======
-#: py/argcheck.c py/obj.c
-msgid "%q must be of type %q"
->>>>>>> da3506939 (Support setting the pull mode for RotaryIO)
 msgstr ""
 
 #: py/argcheck.c py/obj.c py/objstrunicode.c
@@ -1293,19 +1288,11 @@ msgstr ""
 msgid "Invalid multicast MAC address"
 msgstr ""
 
-<<<<<<< HEAD
-#: ports/espressif/common-hal/espidf/__init__.c
-=======
-#: shared-bindings/busio/UART.c
-msgid "Invalid pins"
-msgstr ""
-
 #: shared-bindings/rotaryio/IncrementalEncoder.c
 msgid "Invalid pull"
 msgstr ""
 
-#: ports/espressif/common-hal/espidf/__init__.c ports/espressif/esp_error.c
->>>>>>> da3506939 (Support setting the pull mode for RotaryIO)
+#: ports/espressif/common-hal/espidf/__init__.c
 msgid "Invalid size"
 msgstr ""
 
