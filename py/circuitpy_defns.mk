@@ -305,6 +305,9 @@ endif
 ifeq ($(CIRCUITPY_RP2PIO),1)
 SRC_PATTERNS += rp2pio/%
 endif
+ifeq ($(CIRCUITPY_RP2XIP),1)
+SRC_PATTERNS += xip/%
+endif
 ifeq ($(CIRCUITPY_ROTARYIO),1)
 SRC_PATTERNS += rotaryio/%
 endif

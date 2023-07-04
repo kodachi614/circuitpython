@@ -242,6 +242,7 @@ SRC_C += \
 	boards/$(BOARD)/pins.c \
 	bindings/rp2pio/StateMachine.c \
 	bindings/rp2pio/__init__.c \
+	bindings/xip/__init__.c \
 	common-hal/rp2pio/StateMachine.c \
 	common-hal/rp2pio/__init__.c \
 	audio_dma.c \
